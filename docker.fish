@@ -16,7 +16,7 @@
 
 function __fish_docker_no_subcommand --description 'Test if docker has yet to be given the subcommand'
     for i in (commandline -opc)
-        if contains -- $i attach build commit cp create diff events exec export history images import info inspect kill load login logout logs network pause port ps pull push rename restart rm rmi run save search start stats stop tag top unpause update version volume wait
+        if contains -- $i checkpoint config container image network node plugin secret service stack swarm system trust volume attach build commit cp create deploy diff events exec export history images import info inspect kill load login logout logs pause port ps pull push rename restart rm rmi run save search start stats stop tag top unpause update version wait
             return 1
         end
     end
@@ -28,7 +28,7 @@ function __fish_print_docker_containers --description 'Print a list of docker co
         case running
             docker ps --no-trunc --filter status=running --format '{{.ID}}\n{{.Names}}' | tr ',' '\n'
         case stopped
-            docker ps --no-trunc --filter status=exited --filter status=created --format '{{.ID}}\\n{{.Names}}' | tr ',' '\\n'
+            docker ps --no-trunc --filter status=exited --filter status=created --format '{{.ID}}\n{{.Names}}' | tr ',' '\n'
         case all
             docker ps --no-trunc --all --format '{{.ID}}\n{{.Names}}' | tr ',' '\n'
     end
@@ -43,149 +43,259 @@ function __fish_print_docker_repositories --description 'Print a list of docker 
 end
 
 # common options
-complete -c docker -n '__fish_docker_no_subcommand' -l config=~/.docker -f -d 'Location of client config files'
+complete -c docker -n '__fish_docker_no_subcommand' -l config -f -d 'Location of client config files (default "/Users/khs1994/.docker")'
 complete -c docker -n '__fish_docker_no_subcommand' -s D -l debug -f -d 'Enable debug mode'
-complete -c docker -n '__fish_docker_no_subcommand' -s H -l host=[] -f -d 'Daemon socket(s) to connect to'
-complete -c docker -n '__fish_docker_no_subcommand' -s h -l help -f -d 'Print usage'
-complete -c docker -n '__fish_docker_no_subcommand' -s l -l log-level=info -f -d 'Set the logging level'
+complete -c docker -n '__fish_docker_no_subcommand' -s H -l host -f -d 'Daemon socket(s) to connect to'
+complete -c docker -n '__fish_docker_no_subcommand' -s l -l log-level -f -d 'Set the logging level ("debug"|"info"|"warn"|"error"|"fatal") (default "info")'
 complete -c docker -n '__fish_docker_no_subcommand' -l tls -f -d 'Use TLS; implied by --tlsverify'
-complete -c docker -n '__fish_docker_no_subcommand' -l tlscacert=~/.docker/ca.pem -f -d 'Trust certs signed only by this CA'
-complete -c docker -n '__fish_docker_no_subcommand' -l tlscert=~/.docker/cert.pem -f -d 'Path to TLS certificate file'
-complete -c docker -n '__fish_docker_no_subcommand' -l tlskey=~/.docker/key.pem -f -d 'Path to TLS key file'
+complete -c docker -n '__fish_docker_no_subcommand' -l tlscacert -f -d 'Trust certs signed only by this CA (default "/Users/khs1994/.docker/ca.pem")'
+complete -c docker -n '__fish_docker_no_subcommand' -l tlscert -f -d 'Path to TLS certificate file (default "/Users/khs1994/.docker/cert.pem")'
+complete -c docker -n '__fish_docker_no_subcommand' -l tlskey -f -d 'Path to TLS key file (default "/Users/khs1994/.docker/key.pem")'
 complete -c docker -n '__fish_docker_no_subcommand' -l tlsverify -f -d 'Use TLS and verify the remote'
 complete -c docker -n '__fish_docker_no_subcommand' -s v -l version -f -d 'Print version information and quit'
+complete -c docker -n '__fish_docker_no_subcommand' -s checkpoint -f -d 'Manage checkpoints'
+complete -c docker -n '__fish_docker_no_subcommand' -s config -f -d 'Manage Docker configs'
+complete -c docker -n '__fish_docker_no_subcommand' -s container -f -d 'Manage containers'
+complete -c docker -n '__fish_docker_no_subcommand' -s image -f -d 'Manage images'
+complete -c docker -n '__fish_docker_no_subcommand' -s network -f -d 'Manage networks'
+complete -c docker -n '__fish_docker_no_subcommand' -s node -f -d 'Manage Swarm nodes'
+complete -c docker -n '__fish_docker_no_subcommand' -s plugin -f -d 'Manage plugins'
+complete -c docker -n '__fish_docker_no_subcommand' -s secret -f -d 'Manage Docker secrets'
+complete -c docker -n '__fish_docker_no_subcommand' -s service -f -d 'Manage services'
+complete -c docker -n '__fish_docker_no_subcommand' -s stack -f -d 'Manage Docker stacks'
+complete -c docker -n '__fish_docker_no_subcommand' -s swarm -f -d 'Manage Swarm'
+complete -c docker -n '__fish_docker_no_subcommand' -s system -f -d 'Manage Docker'
+complete -c docker -n '__fish_docker_no_subcommand' -s trust -f -d 'Manage trust on Docker images (experimental)'
+complete -c docker -n '__fish_docker_no_subcommand' -s volume -f -d 'Manage volumes'
 
 # subcommands
+
+# Management Commands
+
+# checkpoint
+complete -c docker -f -n '__fish_docker_no_subcommand' -a checkpoint -d 'Manage checkpoints'
+# config
+complete -c docker -f -n '__fish_docker_no_subcommand' -a config -d 'Manage Docker configs'
+# container
+complete -c docker -f -n '__fish_docker_no_subcommand' -a container -d 'Manage containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a attach -d 'Attach local standard input, output, and error streams to a running container'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a commit -d "Create a new image from a container's changes"
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a cp -d 'Copy files/folders between a container and the local filesystem'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a create -d 'Create a new container'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a diff -d "Inspect changes to files or directories on a container's filesystem"
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a exec -d 'Run a command in a running container'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a export -d "Export a container's filesystem as a tar archive"
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a inspect -d 'Display detailed information on one or more containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a kill -d 'Kill one or more running containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a logs -d 'Fetch the logs of a container'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a ls -d 'List containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a pause -d 'Pause all processes within one or more containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a prune -d 'Remove all stopped containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a rename -d 'Rename a container'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a restart -d 'Restart one or more containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a rm -d 'Remove one or more containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a run -d 'Run a command in a new container'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a start -d 'Start one or more stopped containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a stats -d 'Display a live stream of container(s) resource usage statistics'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a stop -d 'Stop one or more running containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a top -d 'Display the running processes of a container'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a unpause -d 'Unpause all processes within one or more containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a update -d 'Update configuration of one or more containers'
+complete -c docker -A -f -n '__fish_seen_subcommand_from container' -a wait -d 'Block until one or more containers stop, then print their exit codes'
+
+# image
+complete -c docker -f -n '__fish_docker_no_subcommand' -a image -d 'Manage images'
+# network
+complete -c docker -f -n '__fish_docker_no_subcommand' -a network -d 'Manage networks'
+# node
+complete -c docker -f -n '__fish_docker_no_subcommand' -a node -d 'Manage Swarm nodes'
+# plugin
+complete -c docker -f -n '__fish_docker_no_subcommand' -a plugin -d 'Manage plugins'
+# secret
+complete -c docker -f -n '__fish_docker_no_subcommand' -a secret -d 'Manage Docker secrets'
+# service
+complete -c docker -f -n '__fish_docker_no_subcommand' -a service -d 'Manage services'
+# stack
+complete -c docker -f -n '__fish_docker_no_subcommand' -a stack -d 'Manage Docker stacks'
+# swarm
+complete -c docker -f -n '__fish_docker_no_subcommand' -a swarm -d 'Manage Swarm'
+# system
+complete -c docker -f -n '__fish_docker_no_subcommand' -a system -d 'Manage Docker'
+# trust
+complete -c docker -f -n '__fish_docker_no_subcommand' -a trust -d 'Manage trust on Docker images (experimental)'
+# volume
+complete -c docker -f -n '__fish_docker_no_subcommand' -a volume -d 'Manage volumes'
+
+complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a create -d 'Create a volume'
+complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a inspect -d 'Display detailed information on one or more volumes'
+complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a ls -d 'List volumes'
+complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a prune -d 'Remove all unused volumes'
+complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a rm -d 'Remove one or more volumes'
+# complete -c docker -A -n '__fish_seen_subcommand_from create' -s d -l driver -d 'Specify volume driver name (default "local")'
+# complete -c docker -A -n '__fish_seen_subcommand_from create' -l label -d 'Set metadata for a volume'
+# complete -c docker -A -n '__fish_seen_subcommand_from create' -s o -l opt -d 'Set driver specific options (default map[])'
+
 # attach
-complete -c docker -f -n '__fish_docker_no_subcommand' -a attach -d 'Attach to a running container'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a attach -d 'Attach local standard input, output, and error streams to a running container'
 complete -c docker -A -n '__fish_seen_subcommand_from attach' -l detach-keys -f -d 'Override the key sequence for detaching a container'
-complete -c docker -A -n '__fish_seen_subcommand_from attach' -l help -f -d 'Print usage'
 complete -c docker -A -n '__fish_seen_subcommand_from attach' -l no-stdin -f -d 'Do not attach STDIN'
-complete -c docker -A -n '__fish_seen_subcommand_from attach' -l sig-proxy=true -f -d 'Proxy all received signals to the process'
+complete -c docker -A -n '__fish_seen_subcommand_from attach' -l sig-proxy -f -d 'Proxy all received signals to the process (default true)'
 complete -c docker -A -f -n '__fish_seen_subcommand_from attach' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # build
 complete -c docker -f -n '__fish_docker_no_subcommand' -a build -d 'Build an image from a Dockerfile'
-complete -c docker -A -n '__fish_seen_subcommand_from build' -l build-arg=[] -f -d 'Set build-time variables'
-complete -c docker -A -n '__fish_seen_subcommand_from build' -l cpu-shares -f -d 'CPU shares (relative weight)'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l add-host -f -d 'Add a custom host-to-IP mapping (host:ip)'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l build-arg -f -d 'Set build-time variables'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l cache-from -f -d 'Images to consider as cache sources'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -l cgroup-parent -f -d 'Optional parent cgroup for the container'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l compress -f -d 'Compress the build context using gzip'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -l cpu-period -f -d 'Limit the CPU CFS (Completely Fair Scheduler) period'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -l cpu-quota -f -d 'Limit the CPU CFS (Completely Fair Scheduler) quota'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -s c -l cpu-shares -f -d 'CPU shares (relative weight)'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -l cpuset-cpus -f -d 'CPUs in which to allow execution (0-3, 0,1)'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -l cpuset-mems -f -d 'MEMs in which to allow execution (0-3, 0,1)'
-complete -c docker -A -n '__fish_seen_subcommand_from build' -l disable-content-trust=true -f -d 'Skip image verification'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l disable-content-trust -f -d 'Skip image verification (default true)'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -s f -l file -f -d "Name of the Dockerfile (Default is 'PATH/Dockerfile')"
 complete -c docker -A -n '__fish_seen_subcommand_from build' -l force-rm -f -d 'Always remove intermediate containers'
-complete -c docker -A -n '__fish_seen_subcommand_from build' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l iidfile -f -d 'Write the image ID to the file'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -l isolation -f -d 'Container isolation technology'
-complete -c docker -A -n '__fish_seen_subcommand_from build' -l label=[] -f -d 'Set metadata for an image'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l label -f -d 'Set metadata for an image'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -s m -l memory -f -d 'Memory limit'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -l memory-swap -f -d "Swap limit equal to memory plus swap: '-1' to enable unlimited swap"
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l network -f -d 'Set the networking mode for the RUN instructions during build (default "default")'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -l no-cache -f -d 'Do not use cache when building the image'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -l pull -f -d 'Always attempt to pull a newer version of the image'
 complete -c docker -A -n '__fish_seen_subcommand_from build' -s q -l quiet -f -d 'Suppress the build output and print image ID on success'
-complete -c docker -A -n '__fish_seen_subcommand_from build' -l rm=true -f -d 'Remove intermediate containers after a successful build'
-complete -c docker -A -n '__fish_seen_subcommand_from build' -l shm-size -f -d 'Size of /dev/shm, default value is 64MB'
-complete -c docker -A -n '__fish_seen_subcommand_from build' -s t -l tag=[] -f -d "Name and optionally a tag in the 'name:tag' format"
-complete -c docker -A -n '__fish_seen_subcommand_from build' -l ulimit=[] -f -d 'Ulimit options'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l rm -f -d 'Remove intermediate containers after a successful build (default true)'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l security-opt -f -d 'Security options'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l shm-size -f -d 'Size of /dev/shm'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l squash -f -d 'Squash newly built layers into a single new layer'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l stream -f -d 'Stream attaches to server to negotiate build context'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -s t -l tag -f -d "Name and optionally a tag in the 'name:tag' format"
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l target -f -d 'Set the target build stage to build.'
+complete -c docker -A -n '__fish_seen_subcommand_from build' -l ulimit -f -d 'Ulimit options (default [])'
 
 # commit
 complete -c docker -f -n '__fish_docker_no_subcommand' -a commit -d "Create a new image from a container's changes"
 complete -c docker -A -n '__fish_seen_subcommand_from commit' -s a -l author -f -d 'Author (e.g., "John Hannibal Smith <hannibal@a-team.com>")'
-complete -c docker -A -n '__fish_seen_subcommand_from commit' -s c -l change=[] -f -d 'Apply Dockerfile instruction to the created image'
-complete -c docker -A -n '__fish_seen_subcommand_from commit' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from commit' -s c -l change -f -d 'Apply Dockerfile instruction to the created image'
 complete -c docker -A -n '__fish_seen_subcommand_from commit' -s m -l message -f -d 'Commit message'
-complete -c docker -A -n '__fish_seen_subcommand_from commit' -s p -l pause=true -f -d 'Pause container during commit'
+complete -c docker -A -n '__fish_seen_subcommand_from commit' -s p -l pause -f -d 'Pause container during commit (default true)'
 complete -c docker -A -f -n '__fish_seen_subcommand_from commit' -a '(__fish_print_docker_containers all)' -d "Container"
 
 # cp
 complete -c docker -f -n '__fish_docker_no_subcommand' -a cp -d 'Copy files/folders between a container and the local filesystem'
-complete -c docker -A -n '__fish_seen_subcommand_from cp' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from cp' -s a -l archive -f -d 'Archive mode (copy all uid/gid information)'
 complete -c docker -A -n '__fish_seen_subcommand_from cp' -s L -l follow-link -f -d 'Always follow symbol link in SRC_PATH'
 
 # create
 complete -c docker -f -n '__fish_docker_no_subcommand' -a create -d 'Create a new container'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -s a -l attach=[] -f -d 'Attach to STDIN, STDOUT or STDERR'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l add-host=[] -f -d 'Add a custom host-to-IP mapping (host:ip)'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l blkio-weight -f -d 'Block IO (relative weight), between 10 and 1000'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l blkio-weight-device=[] -f -d 'Block IO weight (relative device weight)'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l cpu-shares -f -d 'CPU shares (relative weight)'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l cap-add=[] -f -d 'Add Linux capabilities'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l cap-drop=[] -f -d 'Drop Linux capabilities'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l add-host -f -d 'Add a custom host-to-IP mapping (host:ip)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -s a -l attach -f -d 'Attach to STDIN, STDOUT or STDERR'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l blkio-weight -f -d 'Block IO (relative weight), between 10 and 1000, or 0 to disable (default 0)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l blkio-weight-device -f -d 'Block IO weight (relative device weight) (default [])'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l cap-add -f -d 'Add Linux capabilities'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l cap-drop -f -d 'Drop Linux capabilities'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l cgroup-parent -f -d 'Optional parent cgroup for the container'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l cidfile -f -d 'Write the container ID to the file'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l cpu-period -f -d 'Limit CPU CFS (Completely Fair Scheduler) period'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l cpu-quota -f -d 'Limit CPU CFS (Completely Fair Scheduler) quota'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l cpu-rt-period -f -d 'Limit CPU real-time period in microseconds'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l cpu-rt-runtime -f -d 'Limit CPU real-time runtime in microseconds'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -s c -l cpu-shares -f -d 'CPU shares (relative weight)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l cpus -f -d 'Number of CPUs'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l cpuset-cpus -f -d 'CPUs in which to allow execution (0-3, 0,1)'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l cpuset-mems -f -d 'MEMs in which to allow execution (0-3, 0,1)'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l device=[] -f -d 'Add a host device to the container'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l device-read-bps=[] -f -d 'Limit read rate (bytes per second) from a device'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l device-read-iops=[] -f -d 'Limit read rate (IO per second) from a device'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l device-write-bps=[] -f -d 'Limit write rate (bytes per second) to a device'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l device-write-iops=[] -f -d 'Limit write rate (IO per second) to a device'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l disable-content-trust=true -f -d 'Skip image verification'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l dns=[] -f -d 'Set custom DNS servers'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l dns-opt=[] -f -d 'Set DNS options'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l dns-search=[] -f -d 'Set custom DNS search domains'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -s e -l env=[] -f -d 'Set environment variables'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l device -f -d 'Add a host device to the container'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l device-cgroup-rule -f -d 'Add a rule to the cgroup allowed devices list'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l device-read-bps -f -d 'Limit read rate (bytes per second) from a device (default [])'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l device-read-iops -f -d 'Limit read rate (IO per second) from a device (default [])'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l device-write-bps -f -d 'Limit write rate (bytes per second) to a device (default [])'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l device-write-iops -f -d 'Limit write rate (IO per second) to a device (default [])'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l disable-content-trust -f -d 'Skip image verification (default true)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l dns -f -d 'Set custom DNS servers'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l dns-option -f -d 'Set DNS options'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l dns-search -f -d 'Set custom DNS search domains'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l entrypoint -f -d 'Overwrite the default ENTRYPOINT of the image'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l env-file=[] -f -d 'Read in a file of environment variables'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l expose=[] -f -d 'Expose a port or a range of ports'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l group-add=[] -f -d 'Add additional groups to join'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -s h -l hostname -f -d 'Container host name'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -s e -l env -f -d 'Set environment variables'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l env-file -f -d 'Read in a file of environment variables'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l expose -f -d 'Expose a port or a range of ports'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l group-add -f -d 'Add additional groups to join'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l health-cmd -f -d 'Command to run to check health'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l health-interval -f -d 'Time between running the check (ms|s|m|h) (default 0s)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l health-retries -f -d 'Consecutive failures needed to report unhealthy'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l health-start-period -f -d 'Start period for the container to initialize before starting health-retries countdown (ms|s|m|h) (default 0s)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l health-timeout -f -d 'Maximum time to allow one check to run (ms|s|m|h) (default 0s)'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -s h -l hostname -f -d 'Container host name'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l init -f -d 'Run an init inside the container that forwards signals and reaps processes'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -s i -l interactive -f -d 'Keep STDIN open even if not attached'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l ip -f -d 'Container IPv4 address (e.g. 172.30.100.104)'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l ip6 -f -d 'Container IPv6 address (e.g. 2001:db8::33)'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l ipc -f -d 'IPC namespace to use'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l ip -f -d 'IPv4 address (e.g., 172.30.100.104)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l ip6 -f -d 'IPv6 address (e.g., 2001:db8::33)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l ipc -f -d 'IPC mode to use'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l isolation -f -d 'Container isolation technology'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l kernel-memory -f -d 'Kernel memory limit'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -s l -l label=[] -f -d 'Set meta data on a container'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l label-file=[] -f -d 'Read in a line delimited file of labels'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l link=[] -f -d 'Add link to another container'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l log-driver -f -d 'Logging driver for container'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l log-opt=[] -f -d 'Log driver options'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -s l -l label -f -d 'Set meta data on a container'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l label-file -f -d 'Read in a line delimited file of labels'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l link -f -d 'Add link to another container'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l link-local-ip -f -d 'Container IPv4/IPv6 link-local addresses'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l log-driver -f -d 'Logging driver for the container'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l log-opt -f -d 'Log driver options'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l mac-address -f -d 'Container MAC address (e.g., 92:d0:c6:0a:29:33)'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -s m -l memory -f -d 'Memory limit'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l mac-address -f -d 'Container MAC address (e.g. 92:d0:c6:0a:29:33)'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l memory-reservation -f -d 'Memory soft limit'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l memory-swap -f -d "Swap limit equal to memory plus swap: '-1' to enable unlimited swap"
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l memory-swappiness=-1 -f -d 'Tune container memory swappiness (0 to 100)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l memory-swappiness -f -d 'Tune container memory swappiness (0 to 100) (default -1)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l mount -f -d 'Attach a filesystem mount to the container'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l name -f -d 'Assign a name to the container'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l net=default -f -d 'Connect a container to a network'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l net-alias=[] -f -d 'Add network-scoped alias for the container'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l network -f -d 'Connect a container to a network (default "default")'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l network-alias -f -d 'Add network-scoped alias for the container'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l no-healthcheck -f -d 'Disable any container-specified HEALTHCHECK'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l oom-kill-disable -f -d 'Disable OOM Killer'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l oom-score-adj -f -d "Tune host's OOM preferences (-1000 to 1000)"
-complete -c docker -A -n '__fish_seen_subcommand_from create' -s P -l publish-all -f -d 'Publish all exposed ports to random ports'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -s p -l publish=[] -f -d "Publish a container's port(s) to the host"
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l pid -f -d 'PID namespace to use'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l pids-limit -f -d 'Tune container pids limit (set -1 for unlimited)'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l privileged -f -d 'Give extended privileges to this container'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -s p -l publish -f -d "Publish a container's port(s) to the host"
+complete -c docker -A -n '__fish_seen_subcommand_from create' -s P -l publish-all -f -d 'Publish all exposed ports to random ports'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l read-only -f -d "Mount the container's root filesystem as read only"
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l restart=no -f -d 'Restart policy to apply when a container exits'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l security-opt=[] -f -d 'Security Options'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l shm-size -f -d 'Size of /dev/shm, default value is 64MB'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l stop-signal=SIGTERM -f -d 'Signal to stop a container, SIGTERM by default'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l restart -f -d 'Restart policy to apply when a container exits (default "no")'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l rm -f -d 'Automatically remove the container when it exits'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l runtime -f -d 'Runtime to use for this container'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l security-opt -f -d 'Security Options'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l shm-size -f -d 'Size of /dev/shm'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l stop-signal -f -d 'Signal to stop a container (default "SIGTERM")'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l stop-timeout -f -d 'Timeout (in seconds) to stop a container'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l storage-opt -f -d 'Storage driver options for the container'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l sysctl -f -d 'Sysctl options (default map[])'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l tmpfs -f -d 'Mount a tmpfs directory'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -s t -l tty -f -d 'Allocate a pseudo-TTY'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l tmpfs=[] -f -d 'Mount a tmpfs directory'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l ulimit -f -d 'Ulimit options (default [])'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -s u -l user -f -d 'Username or UID (format: <name|uid>[:<group|gid>])'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l ulimit=[] -f -d 'Ulimit options'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l userns -f -d 'User namespace to use'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l uts -f -d 'UTS namespace to use'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -s v -l volume=[] -f -d 'Bind mount a volume'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -s v -l volume -f -d 'Bind mount a volume'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -l volume-driver -f -d 'Optional volume driver for the container'
-complete -c docker -A -n '__fish_seen_subcommand_from create' -l volumes-from=[] -f -d 'Mount volumes from the specified container(s)'
+complete -c docker -A -n '__fish_seen_subcommand_from create' -l volumes-from -f -d 'Mount volumes from the specified container(s)'
 complete -c docker -A -n '__fish_seen_subcommand_from create' -s w -l workdir -f -d 'Working directory inside the container'
 complete -c docker -A -f -n '__fish_seen_subcommand_from create' -a '(__fish_print_docker_images)' -d "Image"
 
+# deploy
+complete -c docker -f -n '__fish_docker_no_subcommand' -a deploy -d 'Deploy a new stack or update an existing stack'
+complete -c docker -A -n '__fish_seen_subcommand_from deploy' -l bundle-file -f -d 'Path to a Distributed Application Bundle file'
+complete -c docker -A -n '__fish_seen_subcommand_from deploy' -s c -l compose-file -f -d 'Path to a Compose file'
+complete -c docker -A -n '__fish_seen_subcommand_from deploy' -l prune -f -d 'Prune services that are no longer referenced'
+complete -c docker -A -n '__fish_seen_subcommand_from deploy' -l resolve-image -f -d 'Query the registry to resolve image digest and supported platforms ("always"|"changed"|"never") (default "always")'
+complete -c docker -A -n '__fish_seen_subcommand_from deploy' -l with-registry-auth -f -d 'Send registry authentication details to Swarm agents'
+
 # diff
-complete -c docker -f -n '__fish_docker_no_subcommand' -a diff -d "Inspect changes on a container's filesystem"
-complete -c docker -A -n '__fish_seen_subcommand_from diff' -l help -f -d 'Print usage'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a diff -d "Inspect changes to files or directories on a container's filesystem"
 complete -c docker -A -f -n '__fish_seen_subcommand_from diff' -a '(__fish_print_docker_containers all)' -d "Container"
 
 # events
 complete -c docker -f -n '__fish_docker_no_subcommand' -a events -d 'Get real time events from the server'
-complete -c docker -A -n '__fish_seen_subcommand_from events' -s f -l filter=[] -f -d 'Filter output based on conditions provided'
-complete -c docker -A -n '__fish_seen_subcommand_from events' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from events' -s f -l filter -f -d 'Filter output based on conditions provided'
+complete -c docker -A -n '__fish_seen_subcommand_from events' -l format -f -d 'Format the output using the given Go template'
 complete -c docker -A -n '__fish_seen_subcommand_from events' -l since -f -d 'Show all events created since timestamp'
 complete -c docker -A -n '__fish_seen_subcommand_from events' -l until -f -d 'Stream events until this timestamp'
 
@@ -193,7 +303,7 @@ complete -c docker -A -n '__fish_seen_subcommand_from events' -l until -f -d 'St
 complete -c docker -f -n '__fish_docker_no_subcommand' -a exec -d 'Run a command in a running container'
 complete -c docker -A -n '__fish_seen_subcommand_from exec' -s d -l detach -f -d 'Detached mode: run command in the background'
 complete -c docker -A -n '__fish_seen_subcommand_from exec' -l detach-keys -f -d 'Override the key sequence for detaching a container'
-complete -c docker -A -n '__fish_seen_subcommand_from exec' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from exec' -s e -l env -f -d 'Set environment variables'
 complete -c docker -A -n '__fish_seen_subcommand_from exec' -s i -l interactive -f -d 'Keep STDIN open even if not attached'
 complete -c docker -A -n '__fish_seen_subcommand_from exec' -l privileged -f -d 'Give extended privileges to the command'
 complete -c docker -A -n '__fish_seen_subcommand_from exec' -s t -l tty -f -d 'Allocate a pseudo-TTY'
@@ -202,14 +312,13 @@ complete -c docker -A -f -n '__fish_seen_subcommand_from exec' -a '(__fish_print
 
 # export
 complete -c docker -f -n '__fish_docker_no_subcommand' -a export -d "Export a container's filesystem as a tar archive"
-complete -c docker -A -n '__fish_seen_subcommand_from export' -l help -f -d 'Print usage'
 complete -c docker -A -n '__fish_seen_subcommand_from export' -s o -l output -f -d 'Write to a file, instead of STDOUT'
 complete -c docker -A -f -n '__fish_seen_subcommand_from export' -a '(__fish_print_docker_containers all)' -d "Container"
 
 # history
 complete -c docker -f -n '__fish_docker_no_subcommand' -a history -d 'Show the history of an image'
-complete -c docker -A -n '__fish_seen_subcommand_from history' -s H -l human=true -f -d 'Print sizes and dates in human readable format'
-complete -c docker -A -n '__fish_seen_subcommand_from history' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from history' -l format -f -d 'Pretty-print images using a Go template'
+complete -c docker -A -n '__fish_seen_subcommand_from history' -s H -l human -f -d 'Print sizes and dates in human readable format (default true)'
 complete -c docker -A -n '__fish_seen_subcommand_from history' -l no-trunc -f -d "Don't truncate output"
 complete -c docker -A -n '__fish_seen_subcommand_from history' -s q -l quiet -f -d 'Only show numeric IDs'
 complete -c docker -A -f -n '__fish_seen_subcommand_from history' -a '(__fish_print_docker_images)' -d "Image"
@@ -218,85 +327,70 @@ complete -c docker -A -f -n '__fish_seen_subcommand_from history' -a '(__fish_pr
 complete -c docker -f -n '__fish_docker_no_subcommand' -a images -d 'List images'
 complete -c docker -A -n '__fish_seen_subcommand_from images' -s a -l all -f -d 'Show all images (default hides intermediate images)'
 complete -c docker -A -n '__fish_seen_subcommand_from images' -l digests -f -d 'Show digests'
-complete -c docker -A -n '__fish_seen_subcommand_from images' -s f -l filter=[] -f -d 'Filter output based on conditions provided'
+complete -c docker -A -n '__fish_seen_subcommand_from images' -s f -l filter -f -d 'Filter output based on conditions provided'
 complete -c docker -A -n '__fish_seen_subcommand_from images' -l format -f -d 'Pretty-print images using a Go template'
-complete -c docker -A -n '__fish_seen_subcommand_from images' -l help -f -d 'Print usage'
 complete -c docker -A -n '__fish_seen_subcommand_from images' -l no-trunc -f -d "Don't truncate output"
 complete -c docker -A -n '__fish_seen_subcommand_from images' -s q -l quiet -f -d 'Only show numeric IDs'
 complete -c docker -A -f -n '__fish_seen_subcommand_from images' -a '(__fish_print_docker_repositories)' -d "Repository"
 
 # import
 complete -c docker -f -n '__fish_docker_no_subcommand' -a import -d 'Import the contents from a tarball to create a filesystem image'
-complete -c docker -A -n '__fish_seen_subcommand_from import' -s c -l change=[] -f -d 'Apply Dockerfile instruction to the created image'
-complete -c docker -A -n '__fish_seen_subcommand_from import' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from import' -s c -l change -f -d 'Apply Dockerfile instruction to the created image'
 complete -c docker -A -n '__fish_seen_subcommand_from import' -s m -l message -f -d 'Set commit message for imported image'
 
 # info
 complete -c docker -f -n '__fish_docker_no_subcommand' -a info -d 'Display system-wide information'
-complete -c docker -A -n '__fish_seen_subcommand_from info' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from info' -s f -l format -f -d 'Format the output using the given Go template'
 
 # inspect
-complete -c docker -f -n '__fish_docker_no_subcommand' -a inspect -d 'Return low-level information on a container or image'
-complete -c docker -A -n '__fish_seen_subcommand_from inspect' -s f -l format -f -d 'Format the output using the given go template'
-complete -c docker -A -n '__fish_seen_subcommand_from inspect' -l help -f -d 'Print usage'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a inspect -d 'Return low-level information on Docker objects'
+complete -c docker -A -n '__fish_seen_subcommand_from inspect' -s f -l format -f -d 'Format the output using the given Go template'
 complete -c docker -A -n '__fish_seen_subcommand_from inspect' -s s -l size -f -d 'Display total file sizes if the type is container'
-complete -c docker -A -n '__fish_seen_subcommand_from inspect' -l type -f -d 'Return JSON for specified type, (e.g image or container)'
-complete -c docker -A -f -n '__fish_seen_subcommand_from inspect' -a '(__fish_print_docker_containers all)' -d "Container"
-complete -c docker -A -f -n '__fish_seen_subcommand_from inspect' -a '(__fish_print_docker_images)' -d "Image"
+complete -c docker -A -n '__fish_seen_subcommand_from inspect' -l type -f -d 'Return JSON for specified type'
 
 # kill
-complete -c docker -f -n '__fish_docker_no_subcommand' -a kill -d 'Kill a running container'
-complete -c docker -A -n '__fish_seen_subcommand_from kill' -l help -f -d 'Print usage'
-complete -c docker -A -n '__fish_seen_subcommand_from kill' -s s -l signal=KILL -f -d 'Signal to send to the container'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a kill -d 'Kill one or more running containers'
+complete -c docker -A -n '__fish_seen_subcommand_from kill' -s s -l signal -f -d 'Signal to send to the container (default "KILL")'
 complete -c docker -A -f -n '__fish_seen_subcommand_from kill' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # load
 complete -c docker -f -n '__fish_docker_no_subcommand' -a load -d 'Load an image from a tar archive or STDIN'
-complete -c docker -A -n '__fish_seen_subcommand_from load' -l help -f -d 'Print usage'
-complete -c docker -A -n '__fish_seen_subcommand_from load' -s i -l input -f -d 'Read from a tar archive file, instead of STDIN'
+complete -c docker -A -n '__fish_seen_subcommand_from load' -s i -l input -f -d 'Read from tar archive file, instead of STDIN'
 complete -c docker -A -n '__fish_seen_subcommand_from load' -s q -l quiet -f -d 'Suppress the load output'
 
 # login
 complete -c docker -f -n '__fish_docker_no_subcommand' -a login -d 'Log in to a Docker registry'
-complete -c docker -A -n '__fish_seen_subcommand_from login' -l help -f -d 'Print usage'
 complete -c docker -A -n '__fish_seen_subcommand_from login' -s p -l password -f -d 'Password'
+complete -c docker -A -n '__fish_seen_subcommand_from login' -l password-stdin -f -d 'Take the password from stdin'
 complete -c docker -A -n '__fish_seen_subcommand_from login' -s u -l username -f -d 'Username'
 
 # logout
 complete -c docker -f -n '__fish_docker_no_subcommand' -a logout -d 'Log out from a Docker registry'
-complete -c docker -A -n '__fish_seen_subcommand_from logout' -l help -f -d 'Print usage'
 
 # logs
 complete -c docker -f -n '__fish_docker_no_subcommand' -a logs -d 'Fetch the logs of a container'
+complete -c docker -A -n '__fish_seen_subcommand_from logs' -l details -f -d 'Show extra details provided to logs'
 complete -c docker -A -n '__fish_seen_subcommand_from logs' -s f -l follow -f -d 'Follow log output'
-complete -c docker -A -n '__fish_seen_subcommand_from logs' -l help -f -d 'Print usage'
-complete -c docker -A -n '__fish_seen_subcommand_from logs' -l since -f -d 'Show logs since timestamp'
+complete -c docker -A -n '__fish_seen_subcommand_from logs' -l since -f -d 'Show logs since timestamp (e.g. 2013-01-02T13:23:37) or relative (e.g. 42m for 42 minutes)'
+complete -c docker -A -n '__fish_seen_subcommand_from logs' -l tail -f -d 'Number of lines to show from the end of the logs (default "all")'
 complete -c docker -A -n '__fish_seen_subcommand_from logs' -s t -l timestamps -f -d 'Show timestamps'
-complete -c docker -A -n '__fish_seen_subcommand_from logs' -l tail=all -f -d 'Number of lines to show from the end of the logs'
-complete -c docker -A -f -n '__fish_seen_subcommand_from logs' -a '(__fish_print_docker_containers all)' -d "Container"
-
-# network
-complete -c docker -f -n '__fish_docker_no_subcommand' -a network -d 'Manage Docker networks'
-complete -c docker -A -n '__fish_seen_subcommand_from network' -l help -f -d 'Print usage'
+complete -c docker -A -f -n '__fish_seen_subcommand_from logs' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # pause
-complete -c docker -f -n '__fish_docker_no_subcommand' -a pause -d 'Pause all processes within a container'
-complete -c docker -A -n '__fish_seen_subcommand_from pause' -l help -f -d 'Print usage'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a pause -d 'Pause all processes within one or more containers'
 complete -c docker -A -f -n '__fish_seen_subcommand_from pause' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # port
-complete -c docker -f -n '__fish_docker_no_subcommand' -a port -d 'List port mappings or a specific mapping for the CONTAINER'
-complete -c docker -A -n '__fish_seen_subcommand_from port' -l help -f -d 'Print usage'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a port -d 'List port mappings or a specific mapping for the container'
 complete -c docker -A -f -n '__fish_seen_subcommand_from port' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # ps
 complete -c docker -f -n '__fish_docker_no_subcommand' -a ps -d 'List containers'
 complete -c docker -A -n '__fish_seen_subcommand_from ps' -s a -l all -f -d 'Show all containers (default shows just running)'
-complete -c docker -A -n '__fish_seen_subcommand_from ps' -s f -l filter=[] -f -d 'Filter output based on conditions provided'
+complete -c docker -A -n '__fish_seen_subcommand_from ps' -s f -l filter -f -d 'Filter output based on conditions provided'
 complete -c docker -A -n '__fish_seen_subcommand_from ps' -l format -f -d 'Pretty-print containers using a Go template'
-complete -c docker -A -n '__fish_seen_subcommand_from ps' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from ps' -s n -l last -f -d 'Show n last created containers (includes all states) (default -1)'
 complete -c docker -A -n '__fish_seen_subcommand_from ps' -s l -l latest -f -d 'Show the latest created container (includes all states)'
-complete -c docker -A -n '__fish_seen_subcommand_from ps' -s n=-1 -f -d 'Show n last created containers (includes all states)'
 complete -c docker -A -n '__fish_seen_subcommand_from ps' -l no-trunc -f -d "Don't truncate output"
 complete -c docker -A -n '__fish_seen_subcommand_from ps' -s q -l quiet -f -d 'Only display numeric IDs'
 complete -c docker -A -n '__fish_seen_subcommand_from ps' -s s -l size -f -d 'Display total file sizes'
@@ -304,32 +398,28 @@ complete -c docker -A -n '__fish_seen_subcommand_from ps' -s s -l size -f -d 'Di
 # pull
 complete -c docker -f -n '__fish_docker_no_subcommand' -a pull -d 'Pull an image or a repository from a registry'
 complete -c docker -A -n '__fish_seen_subcommand_from pull' -s a -l all-tags -f -d 'Download all tagged images in the repository'
-complete -c docker -A -n '__fish_seen_subcommand_from pull' -l disable-content-trust=true -f -d 'Skip image verification'
-complete -c docker -A -n '__fish_seen_subcommand_from pull' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from pull' -l disable-content-trust -f -d 'Skip image verification (default true)'
 complete -c docker -A -f -n '__fish_seen_subcommand_from pull' -a '(__fish_print_docker_images)' -d "Image"
 complete -c docker -A -f -n '__fish_seen_subcommand_from pull' -a '(__fish_print_docker_repositories)' -d "Repository"
 
 # push
 complete -c docker -f -n '__fish_docker_no_subcommand' -a push -d 'Push an image or a repository to a registry'
-complete -c docker -A -n '__fish_seen_subcommand_from push' -l disable-content-trust=true -f -d 'Skip image signing'
-complete -c docker -A -n '__fish_seen_subcommand_from push' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from push' -l disable-content-trust -f -d 'Skip image signing (default true)'
 complete -c docker -A -f -n '__fish_seen_subcommand_from push' -a '(__fish_print_docker_images)' -d "Image"
 complete -c docker -A -f -n '__fish_seen_subcommand_from push' -a '(__fish_print_docker_repositories)' -d "Repository"
 
 # rename
 complete -c docker -f -n '__fish_docker_no_subcommand' -a rename -d 'Rename a container'
-complete -c docker -A -n '__fish_seen_subcommand_from rename' -l help -f -d 'Print usage'
+complete -c docker -A -f -n '__fish_seen_subcommand_from rename' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # restart
-complete -c docker -f -n '__fish_docker_no_subcommand' -a restart -d 'Restart a container'
-complete -c docker -A -n '__fish_seen_subcommand_from restart' -l help -f -d 'Print usage'
-complete -c docker -A -n '__fish_seen_subcommand_from restart' -s t -l time=10 -f -d 'Seconds to wait for stop before killing the container'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a restart -d 'Restart one or more containers'
+complete -c docker -A -n '__fish_seen_subcommand_from restart' -s t -l time -f -d 'Seconds to wait for stop before killing the container (default 10)'
 complete -c docker -A -f -n '__fish_seen_subcommand_from restart' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # rm
 complete -c docker -f -n '__fish_docker_no_subcommand' -a rm -d 'Remove one or more containers'
 complete -c docker -A -n '__fish_seen_subcommand_from rm' -s f -l force -f -d 'Force the removal of a running container (uses SIGKILL)'
-complete -c docker -A -n '__fish_seen_subcommand_from rm' -l help -f -d 'Print usage'
 complete -c docker -A -n '__fish_seen_subcommand_from rm' -s l -l link -f -d 'Remove the specified link'
 complete -c docker -A -n '__fish_seen_subcommand_from rm' -s v -l volumes -f -d 'Remove the volumes associated with the container'
 complete -c docker -A -f -n '__fish_seen_subcommand_from rm' -a '(__fish_print_docker_containers stopped)' -d "Container"
@@ -337,145 +427,160 @@ complete -c docker -A -f -n '__fish_seen_subcommand_from rm' -a '(__fish_print_d
 # rmi
 complete -c docker -f -n '__fish_docker_no_subcommand' -a rmi -d 'Remove one or more images'
 complete -c docker -A -n '__fish_seen_subcommand_from rmi' -s f -l force -f -d 'Force removal of the image'
-complete -c docker -A -n '__fish_seen_subcommand_from rmi' -l help -f -d 'Print usage'
 complete -c docker -A -n '__fish_seen_subcommand_from rmi' -l no-prune -f -d 'Do not delete untagged parents'
 complete -c docker -A -f -n '__fish_seen_subcommand_from rmi' -a '(__fish_print_docker_images)' -d "Image"
 
 # run
 complete -c docker -f -n '__fish_docker_no_subcommand' -a run -d 'Run a command in a new container'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -s a -l attach=[] -f -d 'Attach to STDIN, STDOUT or STDERR'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l add-host=[] -f -d 'Add a custom host-to-IP mapping (host:ip)'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l blkio-weight -f -d 'Block IO (relative weight), between 10 and 1000'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l blkio-weight-device=[] -f -d 'Block IO weight (relative device weight)'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l cpu-shares -f -d 'CPU shares (relative weight)'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l cap-add=[] -f -d 'Add Linux capabilities'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l cap-drop=[] -f -d 'Drop Linux capabilities'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l add-host -f -d 'Add a custom host-to-IP mapping (host:ip)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -s a -l attach -f -d 'Attach to STDIN, STDOUT or STDERR'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l blkio-weight -f -d 'Block IO (relative weight), between 10 and 1000, or 0 to disable (default 0)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l blkio-weight-device -f -d 'Block IO weight (relative device weight) (default [])'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l cap-add -f -d 'Add Linux capabilities'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l cap-drop -f -d 'Drop Linux capabilities'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l cgroup-parent -f -d 'Optional parent cgroup for the container'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l cidfile -f -d 'Write the container ID to the file'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l cpu-period -f -d 'Limit CPU CFS (Completely Fair Scheduler) period'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l cpu-quota -f -d 'Limit CPU CFS (Completely Fair Scheduler) quota'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l cpu-rt-period -f -d 'Limit CPU real-time period in microseconds'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l cpu-rt-runtime -f -d 'Limit CPU real-time runtime in microseconds'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -s c -l cpu-shares -f -d 'CPU shares (relative weight)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l cpus -f -d 'Number of CPUs'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l cpuset-cpus -f -d 'CPUs in which to allow execution (0-3, 0,1)'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l cpuset-mems -f -d 'MEMs in which to allow execution (0-3, 0,1)'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -s d -l detach -f -d 'Run container in background and print container ID'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l detach-keys -f -d 'Override the key sequence for detaching a container'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l device=[] -f -d 'Add a host device to the container'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l device-read-bps=[] -f -d 'Limit read rate (bytes per second) from a device'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l device-read-iops=[] -f -d 'Limit read rate (IO per second) from a device'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l device-write-bps=[] -f -d 'Limit write rate (bytes per second) to a device'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l device-write-iops=[] -f -d 'Limit write rate (IO per second) to a device'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l disable-content-trust=true -f -d 'Skip image verification'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l dns=[] -f -d 'Set custom DNS servers'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l dns-opt=[] -f -d 'Set DNS options'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l dns-search=[] -f -d 'Set custom DNS search domains'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -s e -l env=[] -f -d 'Set environment variables'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l device -f -d 'Add a host device to the container'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l device-cgroup-rule -f -d 'Add a rule to the cgroup allowed devices list'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l device-read-bps -f -d 'Limit read rate (bytes per second) from a device (default [])'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l device-read-iops -f -d 'Limit read rate (IO per second) from a device (default [])'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l device-write-bps -f -d 'Limit write rate (bytes per second) to a device (default [])'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l device-write-iops -f -d 'Limit write rate (IO per second) to a device (default [])'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l disable-content-trust -f -d 'Skip image verification (default true)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l dns -f -d 'Set custom DNS servers'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l dns-option -f -d 'Set DNS options'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l dns-search -f -d 'Set custom DNS search domains'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l entrypoint -f -d 'Overwrite the default ENTRYPOINT of the image'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l env-file=[] -f -d 'Read in a file of environment variables'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l expose=[] -f -d 'Expose a port or a range of ports'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l group-add=[] -f -d 'Add additional groups to join'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -s h -l hostname -f -d 'Container host name'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -s e -l env -f -d 'Set environment variables'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l env-file -f -d 'Read in a file of environment variables'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l expose -f -d 'Expose a port or a range of ports'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l group-add -f -d 'Add additional groups to join'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l health-cmd -f -d 'Command to run to check health'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l health-interval -f -d 'Time between running the check (ms|s|m|h) (default 0s)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l health-retries -f -d 'Consecutive failures needed to report unhealthy'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l health-start-period -f -d 'Start period for the container to initialize before starting health-retries countdown (ms|s|m|h) (default 0s)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l health-timeout -f -d 'Maximum time to allow one check to run (ms|s|m|h) (default 0s)'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -s h -l hostname -f -d 'Container host name'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l init -f -d 'Run an init inside the container that forwards signals and reaps processes'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -s i -l interactive -f -d 'Keep STDIN open even if not attached'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l ip -f -d 'Container IPv4 address (e.g. 172.30.100.104)'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l ip6 -f -d 'Container IPv6 address (e.g. 2001:db8::33)'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l ipc -f -d 'IPC namespace to use'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l ip -f -d 'IPv4 address (e.g., 172.30.100.104)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l ip6 -f -d 'IPv6 address (e.g., 2001:db8::33)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l ipc -f -d 'IPC mode to use'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l isolation -f -d 'Container isolation technology'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l kernel-memory -f -d 'Kernel memory limit'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -s l -l label=[] -f -d 'Set meta data on a container'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l label-file=[] -f -d 'Read in a line delimited file of labels'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l link=[] -f -d 'Add link to another container'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l log-driver -f -d 'Logging driver for container'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l log-opt=[] -f -d 'Log driver options'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -s l -l label -f -d 'Set meta data on a container'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l label-file -f -d 'Read in a line delimited file of labels'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l link -f -d 'Add link to another container'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l link-local-ip -f -d 'Container IPv4/IPv6 link-local addresses'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l log-driver -f -d 'Logging driver for the container'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l log-opt -f -d 'Log driver options'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l mac-address -f -d 'Container MAC address (e.g., 92:d0:c6:0a:29:33)'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -s m -l memory -f -d 'Memory limit'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l mac-address -f -d 'Container MAC address (e.g. 92:d0:c6:0a:29:33)'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l memory-reservation -f -d 'Memory soft limit'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l memory-swap -f -d "Swap limit equal to memory plus swap: '-1' to enable unlimited swap"
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l memory-swappiness=-1 -f -d 'Tune container memory swappiness (0 to 100)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l memory-swappiness -f -d 'Tune container memory swappiness (0 to 100) (default -1)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l mount -f -d 'Attach a filesystem mount to the container'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l name -f -d 'Assign a name to the container'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l net=default -f -d 'Connect a container to a network'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l net-alias=[] -f -d 'Add network-scoped alias for the container'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l network -f -d 'Connect a container to a network (default "default")'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l network-alias -f -d 'Add network-scoped alias for the container'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l no-healthcheck -f -d 'Disable any container-specified HEALTHCHECK'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l oom-kill-disable -f -d 'Disable OOM Killer'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l oom-score-adj -f -d "Tune host's OOM preferences (-1000 to 1000)"
-complete -c docker -A -n '__fish_seen_subcommand_from run' -s P -l publish-all -f -d 'Publish all exposed ports to random ports'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -s p -l publish=[] -f -d "Publish a container's port(s) to the host"
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l pid -f -d 'PID namespace to use'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l pids-limit -f -d 'Tune container pids limit (set -1 for unlimited)'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l privileged -f -d 'Give extended privileges to this container'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -s p -l publish -f -d "Publish a container's port(s) to the host"
+complete -c docker -A -n '__fish_seen_subcommand_from run' -s P -l publish-all -f -d 'Publish all exposed ports to random ports'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l read-only -f -d "Mount the container's root filesystem as read only"
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l restart=no -f -d 'Restart policy to apply when a container exits'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l restart -f -d 'Restart policy to apply when a container exits (default "no")'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l rm -f -d 'Automatically remove the container when it exits'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l security-opt=[] -f -d 'Security Options'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l shm-size -f -d 'Size of /dev/shm, default value is 64MB'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l sig-proxy=true -f -d 'Proxy received signals to the process'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l stop-signal=SIGTERM -f -d 'Signal to stop a container, SIGTERM by default'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l runtime -f -d 'Runtime to use for this container'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l security-opt -f -d 'Security Options'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l shm-size -f -d 'Size of /dev/shm'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l sig-proxy -f -d 'Proxy received signals to the process (default true)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l stop-signal -f -d 'Signal to stop a container (default "SIGTERM")'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l stop-timeout -f -d 'Timeout (in seconds) to stop a container'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l storage-opt -f -d 'Storage driver options for the container'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l sysctl -f -d 'Sysctl options (default map[])'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l tmpfs -f -d 'Mount a tmpfs directory'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -s t -l tty -f -d 'Allocate a pseudo-TTY'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l tmpfs=[] -f -d 'Mount a tmpfs directory'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l ulimit -f -d 'Ulimit options (default [])'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -s u -l user -f -d 'Username or UID (format: <name|uid>[:<group|gid>])'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l ulimit=[] -f -d 'Ulimit options'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l userns -f -d 'User namespace to use'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l uts -f -d 'UTS namespace to use'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -s v -l volume=[] -f -d 'Bind mount a volume'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -s v -l volume -f -d 'Bind mount a volume'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -l volume-driver -f -d 'Optional volume driver for the container'
-complete -c docker -A -n '__fish_seen_subcommand_from run' -l volumes-from=[] -f -d 'Mount volumes from the specified container(s)'
+complete -c docker -A -n '__fish_seen_subcommand_from run' -l volumes-from -f -d 'Mount volumes from the specified container(s)'
 complete -c docker -A -n '__fish_seen_subcommand_from run' -s w -l workdir -f -d 'Working directory inside the container'
 complete -c docker -A -f -n '__fish_seen_subcommand_from run' -a '(__fish_print_docker_images)' -d "Image"
 
 # save
-complete -c docker -f -n '__fish_docker_no_subcommand' -a save -d 'Save one or more images to a tar archive'
-complete -c docker -A -n '__fish_seen_subcommand_from save' -l help -f -d 'Print usage'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a save -d 'Save one or more images to a tar archive (streamed to STDOUT by default)'
 complete -c docker -A -n '__fish_seen_subcommand_from save' -s o -l output -f -d 'Write to a file, instead of STDOUT'
 complete -c docker -A -f -n '__fish_seen_subcommand_from save' -a '(__fish_print_docker_images)' -d "Image"
 
 # search
 complete -c docker -f -n '__fish_docker_no_subcommand' -a search -d 'Search the Docker Hub for images'
-complete -c docker -A -n '__fish_seen_subcommand_from search' -l automated -f -d 'Only show automated builds'
-complete -c docker -A -n '__fish_seen_subcommand_from search' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from search' -s f -l filter -f -d 'Filter output based on conditions provided'
+complete -c docker -A -n '__fish_seen_subcommand_from search' -l format -f -d 'Pretty-print search using a Go template'
+complete -c docker -A -n '__fish_seen_subcommand_from search' -l limit -f -d 'Max number of search results (default 25)'
 complete -c docker -A -n '__fish_seen_subcommand_from search' -l no-trunc -f -d "Don't truncate output"
-complete -c docker -A -n '__fish_seen_subcommand_from search' -s s -l stars -f -d 'Only displays with at least x stars'
 
 # start
 complete -c docker -f -n '__fish_docker_no_subcommand' -a start -d 'Start one or more stopped containers'
 complete -c docker -A -n '__fish_seen_subcommand_from start' -s a -l attach -f -d 'Attach STDOUT/STDERR and forward signals'
+complete -c docker -A -n '__fish_seen_subcommand_from start' -l checkpoint -f -d 'Restore from this checkpoint'
+complete -c docker -A -n '__fish_seen_subcommand_from start' -l checkpoint-dir -f -d 'Use a custom checkpoint storage directory'
 complete -c docker -A -n '__fish_seen_subcommand_from start' -l detach-keys -f -d 'Override the key sequence for detaching a container'
-complete -c docker -A -n '__fish_seen_subcommand_from start' -l help -f -d 'Print usage'
 complete -c docker -A -n '__fish_seen_subcommand_from start' -s i -l interactive -f -d "Attach container's STDIN"
 complete -c docker -A -f -n '__fish_seen_subcommand_from start' -a '(__fish_print_docker_containers stopped)' -d "Container"
 
 # stats
 complete -c docker -f -n '__fish_docker_no_subcommand' -a stats -d 'Display a live stream of container(s) resource usage statistics'
 complete -c docker -A -n '__fish_seen_subcommand_from stats' -s a -l all -f -d 'Show all containers (default shows just running)'
-complete -c docker -A -n '__fish_seen_subcommand_from stats' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from stats' -l format -f -d 'Pretty-print images using a Go template'
 complete -c docker -A -n '__fish_seen_subcommand_from stats' -l no-stream -f -d 'Disable streaming stats and only pull the first result'
+complete -c docker -A -n '__fish_seen_subcommand_from stats' -l no-trunc -f -d 'Do not truncate output'
 complete -c docker -A -f -n '__fish_seen_subcommand_from stats' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # stop
-complete -c docker -f -n '__fish_docker_no_subcommand' -a stop -d 'Stop a running container'
-complete -c docker -A -n '__fish_seen_subcommand_from stop' -l help -f -d 'Print usage'
-complete -c docker -A -n '__fish_seen_subcommand_from stop' -s t -l time=10 -f -d 'Seconds to wait for stop before killing it'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a stop -d 'Stop one or more running containers'
+complete -c docker -A -n '__fish_seen_subcommand_from stop' -s t -l time -f -d 'Seconds to wait for stop before killing it (default 10)'
 complete -c docker -A -f -n '__fish_seen_subcommand_from stop' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # tag
-complete -c docker -f -n '__fish_docker_no_subcommand' -a tag -d 'Tag an image into a repository'
-complete -c docker -A -n '__fish_seen_subcommand_from tag' -l help -f -d 'Print usage'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a tag -d 'Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE'
 
 # top
 complete -c docker -f -n '__fish_docker_no_subcommand' -a top -d 'Display the running processes of a container'
-complete -c docker -A -n '__fish_seen_subcommand_from top' -l help -f -d 'Print usage'
 complete -c docker -A -f -n '__fish_seen_subcommand_from top' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # unpause
-complete -c docker -f -n '__fish_docker_no_subcommand' -a unpause -d 'Unpause all processes within a container'
-complete -c docker -A -n '__fish_seen_subcommand_from unpause' -l help -f -d 'Print usage'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a unpause -d 'Unpause all processes within one or more containers'
 complete -c docker -A -f -n '__fish_seen_subcommand_from unpause' -a '(__fish_print_docker_containers running)' -d "Container"
 
 # update
 complete -c docker -f -n '__fish_docker_no_subcommand' -a update -d 'Update configuration of one or more containers'
-complete -c docker -A -n '__fish_seen_subcommand_from update' -l blkio-weight -f -d 'Block IO (relative weight), between 10 and 1000'
-complete -c docker -A -n '__fish_seen_subcommand_from update' -l cpu-shares -f -d 'CPU shares (relative weight)'
+complete -c docker -A -n '__fish_seen_subcommand_from update' -l blkio-weight -f -d 'Block IO (relative weight), between 10 and 1000, or 0 to disable (default 0)'
 complete -c docker -A -n '__fish_seen_subcommand_from update' -l cpu-period -f -d 'Limit CPU CFS (Completely Fair Scheduler) period'
 complete -c docker -A -n '__fish_seen_subcommand_from update' -l cpu-quota -f -d 'Limit CPU CFS (Completely Fair Scheduler) quota'
+complete -c docker -A -n '__fish_seen_subcommand_from update' -l cpu-rt-period -f -d 'Limit the CPU real-time period in microseconds'
+complete -c docker -A -n '__fish_seen_subcommand_from update' -l cpu-rt-runtime -f -d 'Limit the CPU real-time runtime in microseconds'
+complete -c docker -A -n '__fish_seen_subcommand_from update' -s c -l cpu-shares -f -d 'CPU shares (relative weight)'
+complete -c docker -A -n '__fish_seen_subcommand_from update' -l cpus -f -d 'Number of CPUs'
 complete -c docker -A -n '__fish_seen_subcommand_from update' -l cpuset-cpus -f -d 'CPUs in which to allow execution (0-3, 0,1)'
 complete -c docker -A -n '__fish_seen_subcommand_from update' -l cpuset-mems -f -d 'MEMs in which to allow execution (0-3, 0,1)'
-complete -c docker -A -n '__fish_seen_subcommand_from update' -l help -f -d 'Print usage'
 complete -c docker -A -n '__fish_seen_subcommand_from update' -l kernel-memory -f -d 'Kernel memory limit'
 complete -c docker -A -n '__fish_seen_subcommand_from update' -s m -l memory -f -d 'Memory limit'
 complete -c docker -A -n '__fish_seen_subcommand_from update' -l memory-reservation -f -d 'Memory soft limit'
@@ -485,16 +590,8 @@ complete -c docker -A -f -n '__fish_seen_subcommand_from update' -a '(__fish_pri
 
 # version
 complete -c docker -f -n '__fish_docker_no_subcommand' -a version -d 'Show the Docker version information'
-complete -c docker -A -n '__fish_seen_subcommand_from version' -s f -l format -f -d 'Format the output using the given go template'
-complete -c docker -A -n '__fish_seen_subcommand_from version' -l help -f -d 'Print usage'
-
-# volume
-complete -c docker -f -n '__fish_docker_no_subcommand' -a volume -d 'Manage Docker volumes'
-complete -c docker -A -n '__fish_seen_subcommand_from volume' -l help -f -d 'Print usage'
+complete -c docker -A -n '__fish_seen_subcommand_from version' -s f -l format -f -d 'Format the output using the given Go template'
 
 # wait
-complete -c docker -f -n '__fish_docker_no_subcommand' -a wait -d 'Block until a container stops, then print its exit code'
-complete -c docker -A -n '__fish_seen_subcommand_from wait' -l help -f -d 'Print usage'
+complete -c docker -f -n '__fish_docker_no_subcommand' -a wait -d 'Block until one or more containers stop, then print their exit codes'
 complete -c docker -A -f -n '__fish_seen_subcommand_from wait' -a '(__fish_print_docker_containers running)' -d "Container"
-
-

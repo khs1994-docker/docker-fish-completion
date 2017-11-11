@@ -284,7 +284,7 @@ def main():
     )
     parser.add_argument(
         '--docker-path',
-        default='/usr/bin'
+        default='/usr/local/bin'
     )
 
     args = parser.parse_args()
