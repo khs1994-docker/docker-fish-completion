@@ -53,20 +53,6 @@ complete -c docker -n '__fish_docker_no_subcommand' -l tlscert -f -d 'Path to TL
 complete -c docker -n '__fish_docker_no_subcommand' -l tlskey -f -d 'Path to TLS key file (default "/Users/khs1994/.docker/key.pem")'
 complete -c docker -n '__fish_docker_no_subcommand' -l tlsverify -f -d 'Use TLS and verify the remote'
 complete -c docker -n '__fish_docker_no_subcommand' -s v -l version -f -d 'Print version information and quit'
-complete -c docker -n '__fish_docker_no_subcommand' -s checkpoint -f -d 'Manage checkpoints'
-complete -c docker -n '__fish_docker_no_subcommand' -s config -f -d 'Manage Docker configs'
-complete -c docker -n '__fish_docker_no_subcommand' -s container -f -d 'Manage containers'
-complete -c docker -n '__fish_docker_no_subcommand' -s image -f -d 'Manage images'
-complete -c docker -n '__fish_docker_no_subcommand' -s network -f -d 'Manage networks'
-complete -c docker -n '__fish_docker_no_subcommand' -s node -f -d 'Manage Swarm nodes'
-complete -c docker -n '__fish_docker_no_subcommand' -s plugin -f -d 'Manage plugins'
-complete -c docker -n '__fish_docker_no_subcommand' -s secret -f -d 'Manage Docker secrets'
-complete -c docker -n '__fish_docker_no_subcommand' -s service -f -d 'Manage services'
-complete -c docker -n '__fish_docker_no_subcommand' -s stack -f -d 'Manage Docker stacks'
-complete -c docker -n '__fish_docker_no_subcommand' -s swarm -f -d 'Manage Swarm'
-complete -c docker -n '__fish_docker_no_subcommand' -s system -f -d 'Manage Docker'
-complete -c docker -n '__fish_docker_no_subcommand' -s trust -f -d 'Manage trust on Docker images (experimental)'
-complete -c docker -n '__fish_docker_no_subcommand' -s volume -f -d 'Manage volumes'
 
 # subcommands
 
@@ -117,7 +103,7 @@ complete -c docker -A -f -n '__fish_seen_subcommand_from image' -a import -d 'Im
 complete -c docker -A -f -n '__fish_seen_subcommand_from image' -a inspect -d 'Display detailed information on one or more images'
 complete -c docker -A -f -n '__fish_seen_subcommand_from image' -a load -d 'Load an image from a tar archive or STDIN'
 complete -c docker -A -f -n '__fish_seen_subcommand_from image' -a ls -d 'List images'
-complete -c docker -A -f -n '__fish_seen_subcommand_from image' -a Prune -d 'Remove unused images'
+complete -c docker -A -f -n '__fish_seen_subcommand_from image' -a prune -d 'Remove unused images'
 complete -c docker -A -f -n '__fish_seen_subcommand_from image' -a pull -d 'Pull an image or a repository from a registry'
 complete -c docker -A -f -n '__fish_seen_subcommand_from image' -a push -d 'Push an image or a repository to a registry'
 complete -c docker -A -f -n '__fish_seen_subcommand_from image' -a rm -d 'Remove one or more images'
@@ -205,6 +191,7 @@ complete -c docker -f -n '__fish_docker_no_subcommand' -a volume -d 'Manage volu
 complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a create -d 'Create a volume'
 complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a inspect -d 'Display detailed information on one or more volumes'
 complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a ls -d 'List volumes'
+complete -xc docker -A -f -n '__fish_seen_subcommand_from ls' -s f -l filter -d "Provide filter values (e.g. 'dangling=true')"
 complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a prune -d 'Remove all unused volumes'
 complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a rm -d 'Remove one or more volumes'
 # complete -c docker -A -n '__fish_seen_subcommand_from create' -s d -l driver -d 'Specify volume driver name (default "local")'
@@ -213,7 +200,7 @@ complete -c docker -A -f -n '__fish_seen_subcommand_from volume' -a rm -d 'Remov
 
 # attach
 complete -c docker -f -n '__fish_docker_no_subcommand' -a attach -d 'Attach local standard input, output, and error streams to a running container'
-complete -c docker -A -n '__fish_seen_subcommand_from attach' -l detach-keys -f -d 'Override the key sequence for detaching a container'
+complete -c docker -n '__fish_seen_subcommand_from attach' -l detach-keys -f -d 'Override the key sequence for detaching a container'
 complete -c docker -A -n '__fish_seen_subcommand_from attach' -l no-stdin -f -d 'Do not attach STDIN'
 complete -c docker -A -n '__fish_seen_subcommand_from attach' -l sig-proxy -f -d 'Proxy all received signals to the process (default true)'
 complete -c docker -A -f -n '__fish_seen_subcommand_from attach' -a '(__fish_print_docker_containers running)' -d "Container"
